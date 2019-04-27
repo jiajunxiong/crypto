@@ -8,8 +8,6 @@ Todo:
 
 """
 
-import enum
-
 
 class HOrder:
     def __init__(self,
@@ -154,10 +152,3 @@ class HMarket:
 class HTicker:
     def __init__(self):
         pass
-
-
-class HOrderStatus(enum.Enum):
-    new = "1"
-    ptf = "2"
-    fuf = "3"
-    cal = "4"

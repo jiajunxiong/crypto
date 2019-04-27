@@ -9,8 +9,9 @@ Todo:
 
 """
 import ccxt
-import utils.htypes
+import clients.ordermanager
 import clients.baseclient
+import utils.htypes
 
 
 class Huobi(clients.baseclient.BaseClient):
@@ -45,7 +46,9 @@ class Huobi(clients.baseclient.BaseClient):
             'apiKey': api_key,
             'secret': api_secret,
         })
+        self.ordermanager = clients.ordermanager.OrderManager("huobi")
 
+    # asycn
     def create_order(self,
                      symbol: str,
                      htype: str,
@@ -72,6 +75,7 @@ class Huobi(clients.baseclient.BaseClient):
         except (ccxt.ExchangeError, ccxt.NetworkError) as error:
             print('Got an error', type(error).__name__, error.args)
             raise
+
         horder = utils.htypes.HOrder(order_id=response["id"],
                                      created_at=response[""],
                                      timestamp=response["timestamp"],
@@ -82,13 +86,14 @@ class Huobi(clients.baseclient.BaseClient):
                                      amount=amount,
                                      filled="0",
                                      order_status="0")
-
+        self.ordermanager.on_order(horder)
         return horder
 
+    # asycn
     def cancel_order(self,
                      order_id: str,
-                     symbol: str,
-                     params=None) -> bool:
+                     symbol=None,
+                     params={}) -> bool:
         """Cancel order
 
         Args:
@@ -101,7 +106,11 @@ class Huobi(clients.baseclient.BaseClient):
 
         """
         response = self.api.cancel_order(order_id, symbol, params)
-        return True if response["status"] == "canceled" else False
+        if response["status"] == "canceled":
+            self.ordermanager.on_cancel(order_id)
+            return True
+        else:
+            return False
 
     def fetch_balance(self, params={}):
         """Get balance
