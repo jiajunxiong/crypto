@@ -9,7 +9,7 @@ Todo:
 
 """
 import ccxt
-import clients.ordermanager
+import managers.ordermanager
 import clients.baseclient
 import utils.htypes
 
@@ -46,7 +46,7 @@ class Binance(clients.baseclient.BaseClient):
             'apiKey': api_key,
             'secret': api_secret,
         })
-        self.ordermanager = clients.ordermanager.OrderManager("binance")
+        self.ordermanager = managers.ordermanager.OrderManager("binance")
 
     # asycn
     def create_order(self,

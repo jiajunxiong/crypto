@@ -10,7 +10,7 @@ Todo:
 """
 
 
-class RiskControl:
+class PositionManager:
 
     def __init__(self):
-        self.risk_config = {}
+        self.position_config = {}
